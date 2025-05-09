@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <img src="${project.image}" alt="${project.title}" class="portfolio-img">
                     <div class="portfolio-overlay">
                         <a href="${project.url}" target="_blank" rel="noopener" class="portfolio-view-btn" aria-label="View details of ${project.title}">
-                            <i class="fas fa-external-link-alt" aria-hidden="true"></i> View Case Study
+                            <i class="fas fa-external-link-alt" aria-hidden="true"></i> View Project
                         </a>
                     </div>
                 </div>
