@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
             image: 'Availabler.png',
             description: 'A real‑time availability management platform designed to eliminate unnecessary back‑and‑forth and idle waiting in professional settings.',
             tools: ['Web Development', 'UX Design', 'Real-time Platform'],
-            url: 'https://availabler.netlify.app/'
+            url: 'https://availabler.netlify.app'
         },
         {
             id: 2,
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
             image: 'DateResume.png',
             description: 'Elevate your serious love life with DateResume. Just like in job hunting, create a "dating résumé," target vetted profiles, and build meaningful relationships.',
             tools: ['Web Development', 'Matching Platform', 'UX Design'],
-            url: 'https://date-resume-match.lovable.app/'
+            url: 'https://dateresume.netlify.app'
         },
         {
             id: 3,
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
             image: 'hinText.png',
             description: 'A client-side text encryption and decryption tool designed to bypass social media censorship while safeguarding user privacy.',
             tools: ['Encryption', 'Privacy Tool', 'Web Development'],
-            url: 'https://v0-hin-text-web-app.vercel.app/'
+            url: 'https://v0-hin-text-web-app.vercel.app'
         },
         {
             id: 5,
