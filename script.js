@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             image: 'MoodTalk.png',
             description: 'Integrates journaling, digital phenotyping, and telehealth into an AI-powered platform for continuous mental health support.',
             tools: ['AI Platform', 'Mental Health', 'Telehealth'],
-            url: 'https://splendid-liger-c344e6.netlify.app'
+            url: 'https://moodtalk.netlify.app'
         },
         {
             id: 4,
