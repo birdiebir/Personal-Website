@@ -220,7 +220,124 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Populate Portfolio Grid
     const portfolioGrid = document.querySelector('.portfolio-grid');
-    let visibleProjects = 4; // Number of initially visible projects
+    let visibleProjects = 0;
+    
+    // Function to detect number of columns in the portfolio grid
+    function detectGridColumns() {
+        // First, ensure the grid is visible to get proper measurements
+        if (portfolioGrid.style.display === 'none') {
+            portfolioGrid.style.display = 'grid';
+        }
+        
+        // Get the computed style of the grid
+        const gridStyle = window.getComputedStyle(portfolioGrid);
+        
+        // Parse the grid-template-columns value to count columns
+        const columnsValue = gridStyle.getPropertyValue('grid-template-columns');
+        
+        // If auto-fill/auto-fit is used, we need to count actual items per row
+        // We'll create a temporary item to measure
+        const tempItem = document.createElement('div');
+        tempItem.style.height = '0';
+        tempItem.style.margin = '0';
+        tempItem.style.padding = '0';
+        tempItem.style.border = '0';
+        portfolioGrid.appendChild(tempItem);
+        
+        // Get the left position of the temp item
+        const tempItemPos = tempItem.getBoundingClientRect().left;
+        
+        // Remove the temporary item
+        portfolioGrid.removeChild(tempItem);
+        
+        // Create a second temporary item to detect when wrapping occurs
+        const tempItems = [];
+        let columns = 0;
+        let lastLeft = 0;
+        
+        // Add items until we detect wrapping (when left position starts decreasing)
+        for (let i = 0; i < 12; i++) {
+            const item = document.createElement('div');
+            item.style.height = '0';
+            item.style.margin = '0';
+            item.style.padding = '0';
+            item.style.border = '0';
+            portfolioGrid.appendChild(item);
+            tempItems.push(item);
+            
+            const left = item.getBoundingClientRect().left;
+            
+            // If left position is less than or equal to the previous item, we've wrapped
+            if (i > 0 && left <= lastLeft) {
+                columns = i;
+                break;
+            }
+            
+            lastLeft = left;
+        }
+        
+        // Clean up all temp items
+        tempItems.forEach(item => portfolioGrid.removeChild(item));
+        
+        // If we couldn't detect columns, fall back to screen width detection
+        if (columns === 0) {
+            // Fallback: use screen width to guess
+            if (window.innerWidth >= 992) {
+                columns = 3;
+            } else {
+                columns = 2;
+            }
+        }
+        
+        return columns;
+    }
+    
+    // Function to determine how many projects to show based on grid columns
+    function getVisibleProjectsCount() {
+        const columns = detectGridColumns();
+        // Always show 2 rows
+        return columns * 2;
+    }
+    
+    // Initialize visible projects based on grid layout
+    visibleProjects = getVisibleProjectsCount();
+    
+    // Update visible projects when window is resized
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            const newVisibleCount = getVisibleProjectsCount();
+            if (newVisibleCount !== visibleProjects) {
+                // Only re-populate if we're still showing the initial set
+                // (to avoid resetting the grid after user clicks "see more")
+                const activeFilter = document.querySelector('.filter-btn.active');
+                if (activeFilter) {
+                    const filter = activeFilter.dataset.filter;
+                    const currentProjects = filter === 'all' ? 
+                        portfolioProjects : 
+                        portfolioProjects.filter(project => project.category === filter);
+                    
+                    // Only reset if we haven't clicked "see more"
+                    if (visibleProjects <= Math.min(6, currentProjects.length)) {
+                        visibleProjects = newVisibleCount;
+                        populatePortfolio(currentProjects);
+                    }
+                }
+            }
+        }, 250); // Debounce resize events
+    });
+    
+    // Helper function to get current projects being displayed
+    function getCurrentProjects() {
+        const activeFilter = document.querySelector('.filter-btn.active');
+        if (!activeFilter) return portfolioProjects;
+        
+        const filter = activeFilter.dataset.filter;
+        return filter === 'all' ? 
+            portfolioProjects : 
+            portfolioProjects.filter(project => project.category === filter);
+    }
     
     function populatePortfolio(projects) {
         if (!portfolioGrid) return;
@@ -307,8 +424,11 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             
             loadMoreBtn.addEventListener('click', function() {
+                // Determine how many more to show based on actual grid columns
+                const columns = detectGridColumns();
+                
                 // Increase the number of visible projects
-                visibleProjects += 4;
+                visibleProjects += columns * 2; // Add two more rows
                 
                 // If we've reached the end, remove the button on next click
                 if (visibleProjects >= projects.length) {
@@ -345,8 +465,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const filter = this.dataset.filter;
             
-            // Reset visible projects count when changing filters
-            visibleProjects = 4;
+            // Reset visible projects count based on grid layout
+            visibleProjects = getVisibleProjectsCount();
             
             // Apply filter with animation
             portfolioGrid.style.opacity = '0';
